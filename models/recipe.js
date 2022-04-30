@@ -5,8 +5,9 @@ const recipeSchema = new mongoose.Schema({
     ingredients: [{
         type: String
     }],
-    instructions: String
-    })
+    instructions: String,
+    
+    },{ writeConcern: { w: 'majority', j: true, wtimeout: 1000 } })
 
 module.exports = mongoose.model('Recipe', recipeSchema);
 
