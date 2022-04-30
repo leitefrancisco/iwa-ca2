@@ -1,47 +1,47 @@
 const Recipe = require("./models/recipe");
 
 exports.createRecipe = function(req, res){
-    let newRecipe = new User(req.body);
-    newRecipe.save(function(err, user){
+    let newRecipe = new Recipe(req.body);
+    newRecipe.save(function(err, recipe){
         if(err){
             res.status(400).json(err);
         }
-        res.json(user);
+        res.json(recipe);
     });
 };
 
 exports.getRecipes = function(req, res){
-    Recipe.find({}, function(err, users){
+    Recipe.find({}, function(err, recipes){
         if(err){
             res.status(400).json(err);
         }
-        res.json(users);
+        res.json(recipes);
     });
 };
 
 exports.getRecipe = function(req, res) {
-    Recipe.findOne({_id: req.params.id}, function (err, user) {
+    Recipe.findOne({_id: req.params.id}, function (err, recipe) {
       if (err) {
         res.status(400).json(err);
       } 
-      res.json(user);
+      res.json(recipe);
     }); 
 };
 
 exports.updateRecipe = function(req, res) {
-    Recipe.findOneAndUpdate({_id: req.params.id}, req.body, {new: true},function (err, user) {
+    Recipe.findOneAndUpdate({_id: req.params.id}, req.body, {new: true},function (err, recipe) {
       if (err) {
         res.status(400).json(err);
       } 
-      res.json(user);
+      res.json(recipe);
     }); 
 };
 
 exports.deleteRecipe = function(req, res) {
-    Recipe.findByIdAndRemove(req.params.id, function (err, user) {
+    Recipe.findByIdAndRemove(req.params.id, function (err, recipe) {
       if (err) {
         res.status(400).json(err);
       } 
-      res.json(user);
+      res.json(recipe);
     }); 
 };
