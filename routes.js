@@ -10,7 +10,7 @@ const   express = require("express"),
         app = express(),
         path = require('path');
 
-
+router.use(express.static(__dirname + '/public/'));
 
 router.post('/recipes', recipeCtrl.createRecipe);
 router.get('/recipes', recipeCtrl.getRecipes);
@@ -21,9 +21,9 @@ router.delete('/recipes/:id', recipeCtrl.deleteRecipe);
 //show the index.html at the index
 router.get('/',(req, res) => {
     res.sendFile('index.html', {
-        root: path.join(__dirname, './views/')
+        root: path.join(__dirname, './views')
     })
-})
+});
 
 
 module.exports = router;
