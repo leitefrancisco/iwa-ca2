@@ -5,6 +5,7 @@ const   http = require("http"),
         dotenv = require("dotenv");
 
 let app = express();
+// let port = process.env.PORT || 8000;
 let port = process.env.PORT || 8000;
 
 dotenv.config();
@@ -13,7 +14,8 @@ app.use(express.json());
 app.use(logger("tiny"));
 app.use(require('./routes'));
 
-mongoose.connect(process.env.dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
+// mongoose.connect(process.env.dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
+        mongoose.connect("mongodb://localhost/test", { useNewUrlParser: true, useUnifiedTopology: true })
         .then((result) => console.log('connected to db'))
         .catch((err) => console.log(err));
 
