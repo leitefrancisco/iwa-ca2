@@ -7,21 +7,26 @@ function refresh_page(){
     $("#middle").html("");
     getTitles();
 }
+
 //adds a new row to add more ingredients
 function add_new_row(){
     $("#ingredients-row").append('<input type="text" class="form-control">')
 };
+
 //delete last ingredient row in the array
 function delete_last_ingredient_row(){
     var list = document.getElementById("ingredients-row");
     list.removeChild(list.childNodes[list.childNodes.length -1]);
 };
+
 //opens the recipe clicked on the left menu
 function open_recipe(recipeId){
     $("#middle").empty();
     draw_recipe(recipeId);
     currentSelected = recipeId;
+    console.log(currentSelected+"oppaaaaaaaa");
 };
+
 //opens a form in blank to add a new recipe
 function add_new_recipe(){
     $("#middle").empty();
@@ -49,6 +54,7 @@ function add_new_recipe(){
     $("#middle").append(strHtml);
 
 };
+
 //opens a form with the current recipe selected so the user can edit it
 function edit_recipe(){
     $("#middle").empty();
@@ -101,10 +107,10 @@ function edit_recipe(){
     $.getHTMLuncached("/get/recipe");
 
 };
+
 //draws the recipe to the middle div in the index html
 function draw_recipe(recipeId){
-
-
+    
     let url = apiURL + recipeId;
     
     fetch(url)
@@ -126,7 +132,7 @@ function draw_recipe(recipeId){
 
         strHtml+="</ul>"+
             "<h2>Instructions</h2>"+
-            "<p>"+ rec.instructions +"</p>"
+            "<p>"+ rec.instructions.replace(/\\n/g, "<br />"); +"</p>"
         "</div>"
 
         $("#middle").append(strHtml);
@@ -136,33 +142,41 @@ function draw_recipe(recipeId){
     }); 
 
 };
+
 //deletes the current recipe
 function delete_recipe(){
+
+
+    if(!currentSelected == ''){
+        if(confirm("Delete Current Recipe?")){
     
-    if(confirm("Delete Current Recipe?")){
+            fetch(apiURL+currentSelected,{
+                method: 'delete',
+            }).then(response => response.json()) 
+            .then(json => {
+                console.log(json)
+                newID =json._id ;
+            })
+            .catch(err => console.log(err));
+            
+            
+            getTitles();
+            $("#middle").empty();
+            
+            document.getElementById("titleOf"+currentSelected).remove();
+        
+           
+            recipeIds.remove(currentSelected.value);
+            
+            currentSelected ='';
+            }
     
-    fetch(apiURL+currentSelected,{
-        method: 'delete',
-    }).then(response => response.json()) 
-    .then(json => {
-        console.log(json)
-        newID =json._id ;
-    })
-    .catch(err => console.log(err));
-    
-    
-    getTitles();
-    $("#middle").empty();
     }
-
-    document.getElementById("titleOf"+currentSelected).remove();
-    recipeIds.remove(currentSelected);
-    currentSelected ='';
-
+    else{
+        alert("No recipe selected")
+    }
+    
 };
-
-
-
 
 //saves the new recipe or the editted recipe in the xml file  the server knows by the id of the recipe if it is a edition or an add
 function saveNewRecipe() {
@@ -194,9 +208,10 @@ function saveNewRecipe() {
     
     getTitles();
     $("#middle").empty();
+    currentSelected='';
+    
    
 }
-
 
 //gets the information in the fields and parses it to a json format
 function getFields(){
@@ -238,11 +253,12 @@ function getFields(){
         return null;
     }
     else{
-        return strJSON;
+        console.log(strJSON);
+        return strJSON.replace(/\n/g, "\\\\n").replace(/\r/g, "\\\\r").replace(/\t/g, "\\\\t");
+        
     }
 
 }
-
 
 //fetch the all the recipes from the API and adds to the available recipes section in the left menu 
 function getTitles(){
@@ -255,17 +271,20 @@ function getTitles(){
     .then(function(data){
         for (var i = 0; i< data.length ; i++ ){
             var id = data[i]._id;
-            if(!recipeIds.includes(id))
+            if(!recipeIds.includes(id)){
             document.getElementById("menu-recipes").innerHTML +=
             "<li id='titleOf"+id+"' onclick= \"open_recipe('"+id+"')\">" + data[i].title+"</li>"
             recipeIds.push(id);
+            }
         
         }
     }).catch(function (err){
         console.log(err);
     }); 
+    console.log(recipeIds);
 
 };
+
 //when the document finishes loading , get the titles of the available recipes 
 $(document).ready(function(){
     getTitles();
