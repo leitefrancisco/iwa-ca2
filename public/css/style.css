@@ -3,11 +3,12 @@
     border-style: dashed ;
     border-color:  #009;
     padding: 20px;
+    
 }
 
 ul {
     background: gray;
-    padding: 20px;
+    padding: 10px;
 }
 
 ul li {
@@ -15,6 +16,16 @@ ul li {
     font-size: 20px;
     list-style-type: none;
     background: gray;
+    color: white;
+    margin: 5px;
+    cursor:pointer;
+}
+
+.myRecipeIngredients{
+    list-style:disc;
+    font-family: "Comic Sans MS";
+    font-size: 20px;
+    list-style-type: none;
     color: white;
     margin: 5px;
 }
