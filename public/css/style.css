@@ -7,7 +7,6 @@
 }
 
 ul {
-    background: gray;
     padding: 10px;
 }
 
@@ -15,17 +14,9 @@ ul li {
     font-family: "Comic Sans MS";
     font-size: 20px;
     list-style-type: none;
-    background: gray;
-    color: white;
+    color: black;
     margin: 5px;
     cursor:pointer;
 }
 
-.myRecipeIngredients{
-    list-style:disc;
-    font-family: "Comic Sans MS";
-    font-size: 20px;
-    list-style-type: none;
-    color: white;
-    margin: 5px;
-}
+

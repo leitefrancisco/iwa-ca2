@@ -57,54 +57,56 @@ function add_new_recipe(){
 
 //opens a form with the current recipe selected so the user can edit it
 function edit_recipe(){
-    $("#middle").empty();
-    $.getHTMLuncached = function(url) {
-        return $.ajax({
-            url: url,
-            data: "id="+ currentSelected,
-            type: 'GET',
-            cache: false,
-            success: function(rec) {
+    if(!currentSelected == ''){
+        $("#middle").empty();
+        
+        
+            let url = apiURL + currentSelected;
+        
+        fetch(url)
+        .then(function (response){
+            return response.json();
+        })
+        .then(function(rec){
+        
+            //$("#middle").append(html);
+            console.log(rec);
 
-                //$("#middle").append(html);
-                console.log(rec);
+            let ingredients = rec.ingredients;//renders the form with the information from the json received
+            let strHtml = "<form class = 'ingredients-form'>"+
+                "<label for='recipe-title' class='form-label'>Recipe Title:</label>"+
+                "<div id = 'recipeName-row' class='col-8'></div>"+
+                "<input type='text' class='form-control' id='recipe-title' value = '"+rec.title+"'>"+
+                "</div>"+
+                "<div class='mb-3'>"+
+                "<label class='form-label'>Ingredients</label>"+
+                "<div id = 'ingredients-row' class='col-4'>";
 
-                let ingredients = rec.ingredients[0].ingredient;//renders the form with the information from the json received
-                let strHtml = "<form class = 'ingredients-form'>"+
-                    "<label for='recipe-name' class='form-label'>Recipe Name:</label>"+
-                    "<div id = 'recipeName-row' class='col-8'></div>"+
-                    "<input type='text' class='form-control' id='recipe-name' value = '"+rec.title+"'>"+
-                    "</div>"+
-                    "<div class='mb-3'>"+
-                    "<label class='form-label'>Ingredients</label>"+
-                    "<div id = 'ingredients-row' class='col-4'>";
-
-                for(let i=0; i < ingredients.length;i++){
-                    strHtml +="<input type='text' class='form-control ' value = '"+ingredients[i]+"'>";
-                }
-
-                strHtml += "</div>"+
-                    "<button id = 'btnRemoveRow' type='button' class='btn btn-warning' style= 'float:right' onclick='delete_last_ingredient_row()'> Remove Last Ingredient Row  </button>"+
-                    "<button id = 'btnAddRow' type='button' class='btn btn-info' style='float: right' onclick='add_new_row()'>Add Ingredient Row</button>"+
-                    "</div>"+
-                    "<div class='mb-3'>"+
-                    "<label for='recipe-Instructions' class='form-label'>Instructions:</label>"+
-                    "<div id = 'instructions-row'>"+
-                    "<textarea type  = 'text' class='form-control' id='recipe-instructions' rows='5' >"+rec.instructions+"</textarea>"+
-                    "</div>"+
-                    "</div>"+
-                    "<input id='recipe-id' type='hidden' value='" + rec.id + "'/>"+
-                    "<button type='button' class='btn btn-primary' onclick= 'saveExistingRecipe()'>Save Recipe</button>"+
-                    "</form>";
-                $("#middle").append(strHtml);
-
-            },
-            error: function(r) {
-                console.log("Error " + r.responseText);
+            for(let i=0; i < ingredients.length;i++){
+                strHtml +="<input type='text' class='form-control ' value = '"+ingredients[i]+"'>";
             }
-        });
-    };
-    $.getHTMLuncached("/get/recipe");
+
+            strHtml += "</div>"+
+                "<button id = 'btnRemoveRow' type='button' class='btn btn-warning' style= 'float:right' onclick='delete_last_ingredient_row()'> Remove Last Ingredient Row  </button>"+
+                "<button id = 'btnAddRow' type='button' class='btn btn-info' style='float: right' onclick='add_new_row()'>Add Ingredient Row</button>"+
+                "</div>"+
+                "<div class='mb-3'>"+
+                "<label for='recipe-Instructions' class='form-label'>Instructions:</label>"+
+                "<div id = 'instructions-row'>"+
+                "<textarea type  = 'text' class='form-control' id='recipe-instructions' rows='5' >"+rec.instructions.replace(/\\n/g, "\n")+"</textarea>"+
+                "</div>"+
+                "</div>"+
+                "<input id='recipe-id' type='hidden' value='" + rec.id + "'/>"+
+                "<button type='button' class='btn btn-primary' onclick= 'saveExistingRecipe()'>Save Recipe</button>"+
+                "</form>";
+            $("#middle").append(strHtml);
+
+        }).catch(function (err){
+            console.log(err);
+        }); 
+    }else{
+        alert("No recipe selected")
+    }
 
 };
 
@@ -127,7 +129,7 @@ function draw_recipe(recipeId){
         "<ul>"
 
         for(var i=0; i < ingredients.length;i++){  //add each ingredient to the div
-            strHtml += "<li class = \"myRecipeIngredients\" >" + ingredients[i] + "</li>";
+            strHtml += "<li>" + ingredients[i] + "</li>";
         }
 
         strHtml+="</ul>"+
@@ -160,14 +162,10 @@ function delete_recipe(){
             .catch(err => console.log(err));
             
             
-            getTitles();
-            $("#middle").empty();
-            
             document.getElementById("titleOf"+currentSelected).remove();
-        
-           
-            recipeIds.remove(currentSelected.value);
             
+            recipeIds.splice(recipeIds.indexOf(currentSelected));
+            $("#middle").empty();
             currentSelected ='';
             }
     
@@ -209,6 +207,41 @@ function saveNewRecipe() {
     getTitles();
     $("#middle").empty();
     currentSelected='';
+    
+   
+}
+
+function saveExistingRecipe(){
+    var jsonToAdd = getFields();
+    console.log(jsonToAdd);
+    let obj = JSON.parse(jsonToAdd)
+    console.log(jsonToAdd)
+
+    
+    if(jsonToAdd == null){
+        alert("please fill TITLE, INSTRUCTIONS and have at leas one INGREDIENT");
+        return;
+    }
+    
+    
+    
+    fetch(apiURL+currentSelected,{
+        method: 'put',
+        headers: {
+            'Content-Type': 'application/json'
+          },
+        body: JSON.stringify(obj)
+    }).then(response => response.json()) 
+    .then(json =>{
+        console.log(json);
+        document.getElementById("titleOf"+currentSelected).innerHTML = json.title ;
+    }).catch(err => console.log(err));
+    open_recipe(currentSelected);
+    
+    
+
+    // recipeIds.splice(recipeIds.indexOf(currentSelected));
+    // getTitles();
     
    
 }
@@ -262,7 +295,6 @@ function getFields(){
 
 //fetch the all the recipes from the API and adds to the available recipes section in the left menu 
 function getTitles(){
-    
     
     fetch(apiURL)
     .then(function (response){
