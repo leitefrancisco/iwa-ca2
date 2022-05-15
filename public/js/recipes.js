@@ -24,7 +24,6 @@ function open_recipe(recipeId){
     $("#middle").empty();
     draw_recipe(recipeId);
     currentSelected = recipeId;
-    console.log(currentSelected+"oppaaaaaaaa");
 };
 
 //opens a form in blank to add a new recipe
@@ -176,7 +175,7 @@ function delete_recipe(){
     
 };
 
-//saves the new recipe or the editted recipe in the xml file  the server knows by the id of the recipe if it is a edition or an add
+//saves the new recipe in the database via API
 function saveNewRecipe() {
     var jsonToAdd = getFields();
     let obj = JSON.parse(jsonToAdd)
