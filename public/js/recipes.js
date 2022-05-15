@@ -1,6 +1,6 @@
 let currentSelected='';//global variable to know what recipe is selected
 let recipeIds=[];
-let apiURL = "https://8000-leitefrancisco-iwaca2-ds1i9le2eia.ws-eu45.gitpod.io/recipes/";
+let apiURL = "https://iwa-2019300.herokuapp.com/recipes/";
 
 //refreshes the page after adding or editing a recipe
 function refresh_page(){
