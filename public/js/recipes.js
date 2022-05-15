@@ -210,7 +210,7 @@ function saveNewRecipe() {
     
    
 }
-
+//updates an existing recipe in the db
 function saveExistingRecipe(){
     var jsonToAdd = getFields();
     console.log(jsonToAdd);
